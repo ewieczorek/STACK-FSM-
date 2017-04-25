@@ -1,0 +1,214 @@
+module fsm2(data, math01data, math12data, math34data, reg0, reg1, reg2, reg3, push, pop, popmath, popswap, count, out0, out1, out2, out3, overflow, underflow, load);
+	input reg [3:0] data, math01data, math12data, math23data, reg0, reg1, reg2, reg3;
+	input reg [2:0] count;
+	input push, pop, popmath, popswap;
+	output reg [3:0] out0;
+	output reg [3:0] out1;
+	output reg [3:0] out2;
+	output reg [3:0] out3;
+	output reg overflow, underflow, load;
+	
+	always @(push or Pop or popmath or swap)
+	if(push == 1)
+		begin 
+			case (count) 
+				0:begin 
+					out0 <= data;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end	
+				1:begin 
+					out0 <= reg0;
+					out1 <= data;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				2:begin 
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= data;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				3:begin 
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= reg2;
+					out3 <= data;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				4, 5, 6, 7:begin
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= reg2;
+					out3 <= reg3;
+					overflow <= 1'b1;
+					underflow <= 1'b0;
+				end
+			endcase
+			load = 1'b1;
+		end
+	else if(pop == 1)
+		begin 
+			case (count) 
+				0:begin 
+					out0 <= 4'b0000;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end	
+				1:begin 
+					out0 <= 4'b0000;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				2:begin 
+					out0 <= reg0;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				3:begin 
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end
+				4:begin
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= reg2;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end
+				5, 6, 7:begin
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= reg2;
+					out3 <= reg3;
+					overflow <= 1'b1;
+					underflow <= 1'b0;
+				end
+			endcase
+			load = 1'b1;
+		end
+	else if(popmath == 1)
+		begin 
+			case (count) 
+				0:begin 
+					out0 <= 4'b0000;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end	
+				1:begin 
+					out0 <= reg1;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end
+				2:begin 
+					out0 <= math01data;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				3:begin 
+					out0 <= reg0;
+					out1 <= math12data;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				4:begin
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= math23data;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				5, 6, 7:begin
+					overflow <= 1;
+				end
+			endcase
+			load = 1'b1;
+		end
+	else if(popswap == 1)
+		begin 
+			case (count) 
+				0:begin 
+					out0 <= 4'b0000;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end	
+				1:begin 
+					out0 <= reg1;
+					out1 <= 4'b0000;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b1;
+				end
+				2:begin 
+					out0 <= reg1;
+					out1 <= reg0;
+					out2 <= 4'b0000;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				3:begin 
+					out0 <= reg0;
+					out1 <= reg2;
+					out2 <= reg1;
+					out3 <= 4'b0000;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				4:begin
+					out0 <= reg0;
+					out1 <= reg1;
+					out2 <= reg3;
+					out3 <= reg2;
+					overflow <= 1'b0;
+					underflow <= 1'b0;
+				end
+				5, 6, 7:begin
+					overflow <= 1'b1;
+				end
+			endcase
+			load = 1'b1;
+		end
+	else
+		begin
+			load = 1'b0;
+		end
+endmodule
